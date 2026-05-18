@@ -1,0 +1,116 @@
++++++++++++++++++++++BESTANDEN ZOEKEN++++++++++++++++++++++++++++
+
+🔍 Stap 1: snel zoeken in je hoofdmap (iCloudDrive)
+
+Jij werkt daar meestal, dus begin hier:
+
+Get-ChildItem -Path "C:\Users\patri\iCloudDrive" -Recurse -Filter "tornooien.csv" -ErrorAction SilentlyContinue
+
+👉 Vindt hij iets? Dan zie je het volledige pad.
+
+🔍 Stap 2: zoek op héél je pc (duurt langer, maar grondig)
+
+Als stap 1 niets oplevert:
+
+Get-ChildItem -Path C:\ -Recurse -Filter "tornooien.csv" -ErrorAction SilentlyContinue
+
+💡 Tip: dit kan even duren — Windows kruipt hier letterlijk overal.
+
+⚡ Sneller zoeken (aanrader)
+
+Gebruik deze versie — sneller en properder output:
+
+Get-ChildItem -Path C:\ -Recurse -Filter "tornooien.csv" -ErrorAction SilentlyContinue | Select-Object FullName
+🎯 Slimme variant (als je naam niet 100% zeker is)
+
+Misschien heet het bestand nét anders:
+
+Get-ChildItem -Path C:\Users\patri -Recurse -Include "*tornooi*.csv" -ErrorAction SilentlyContinue
+
+👉 Dit pakt bv:
+
+tornooien_backup.csv
+tornooi_2026.csv
+export_tornooien.csv
+🚀 Pro tip (Patrick-level efficiënt)
+
+Zoek eerst in je projectmap:
+
+Get-ChildItem -Path "C:\Users\patri\iCloudDrive\08_PETANQUE\pc-tornooien" -Recurse -Filter "*.csv"
+
+Want eerlijk:
+👉 90% kans dat het daar ergens zit… of per ongeluk verplaatst 😄
+
+❗ Nog niets gevonden?
+
+Dan zijn dit je volgende pistes:
+
+Prullenbak checken (klassieker… en ja, vaak bingo)
+OneDrive / iCloud versiegeschiedenis
+Git repo (als het daarin zat → kunnen we het terughalen)
+
+
+++++++++++++++++DUBBELE BESTANDEN ZOEKEN++++++++++++++++++++++++++
+
+1. Snelste (zelfde naam + grootte)
+
+Dit is vaak al genoeg:
+
+Get-ChildItem Z:\ -Recurse -File |
+Group-Object Name, Length |
+Where-Object { $_.Count -gt 1 } |
+ForEach-Object { $_.Group }
+
+👉 Wat doet dit:
+
+zoekt ALLE bestanden
+groepeert op naam + grootte
+toont enkel dubbels
+
+📌 Nadeel: inhoud kan verschillend zijn → maar 90% klopt dit gewoon.
+
+🔹 2. Serieuzer (hash = echte duplicaten)
+
+Dit is de betrouwbare methode:
+
+Get-ChildItem Z:\ -Recurse -File |
+Get-FileHash |
+Group-Object Hash |
+Where-Object { $_.Count -gt 1 } |
+ForEach-Object { $_.Group }
+
+👉 Dit vergelijkt inhoud (SHA256 hash)
+✔️ 100% zeker duplicaten
+❗ Maar: trager (zeker op netwerk Z:)
+
+🔹 3. Slimme aanpak (sneller + correct)
+
+Eerst filteren → dan hash (beste combinatie):
+
+$files = Get-ChildItem Z:\ -Recurse -File
+
+$possible = $files | Group-Object Length | Where-Object { $_.Count -gt 1 }
+
+$possible.Group | Get-FileHash |
+Group-Object Hash |
+Where-Object { $_.Count -gt 1 } |
+ForEach-Object { $_.Group }
+
+👉 Veel sneller dan alles hashen ineens
+
+🔥 Extra: netjes tonen (overzicht)
+
+Wil je het wat leesbaarder:
+
+Get-ChildItem Z:\ -Recurse -File |
+Get-FileHash |
+Group-Object Hash |
+Where-Object { $_.Count -gt 1 } |
+ForEach-Object {
+    Write-Host "`n=== DUBBEL ===" -ForegroundColor Yellow
+    $_.Group | Select-Object Path
+}
+⚠️ Real talk (belangrijk)
+Z:\ = netwerk → dit kan traag zijn
+Niet meteen verwijderen → eerst bekijken
+Backup is geen luxe hier 😉

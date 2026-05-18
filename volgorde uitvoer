@@ -1,0 +1,69 @@
+// 1. Maak een lege array
+const tornooien = [];
+
+// 2. Zoek de knop in de HTML
+const btnAdd = document.getElementById("btnAdd");
+
+// 3. Zoek de lijst-container in de HTML
+const lijst = document.getElementById("lijst");
+
+// 4. Zoek het invoerveld in de HTML
+const txtNaam = document.getElementById("txtNaam");
+
+// 5. Definieer de functie renderLijst()
+// Let op: deze wordt nu nog NIET uitgevoerd
+function renderLijst() {
+
+  // 10. renderLijst start na een klik
+  console.log("render gestart");
+
+  // 11. Maak de lijst op het scherm leeg
+  lijst.innerHTML = "";
+
+  // 12. Toon de volledige array in de console
+  console.log(tornooien);
+
+  // 13. Loop door elk tornooi in de array
+  for (let tornooi of tornooien) {
+
+    // 14. Toon één tornooi in de console
+    console.log(tornooi);
+
+    // 15. Maak een nieuwe div
+    const item = document.createElement("div");
+
+    // 16. Zet de naam van het tornooi in de div
+    item.textContent = tornooi;
+
+    // 17. Geef de div rode tekst
+    item.style.color = "red";
+
+    // 18. Voeg de div toe aan de lijst op het scherm
+    lijst.appendChild(item);
+  }
+}
+
+// 6. Zet een klik-luisteraar op de knop
+// Let op: deze code wacht nu op een klik
+btnAdd.addEventListener("click", function () {
+
+  // 7. Lees wat in het invoerveld staat
+  const naam = txtNaam.value;
+
+  // 8. Voeg die naam toe aan de array
+  tornooien.push(naam);
+
+  // 9. Roep renderLijst() op
+  renderLijst();
+
+  // 19. Maak het invoerveld leeg
+  txtNaam.value = "";
+});
+
+
+// 1 t/m 6 gebeuren bij het laden van de pagina.
+// 7 t/m 19 gebeuren pas nadat jij op de knop klikt.
+
+
+
+// 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18 → 19
