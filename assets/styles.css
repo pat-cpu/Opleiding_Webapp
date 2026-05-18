@@ -1,3 +1,21 @@
 body {
   font-family: Arial;
 }
+
+.blok {
+  margin-bottom: 30px;
+}
+.container {
+  display: flex;
+  gap: 40px;
+}
+
+.kolom {
+  border: 1px solid gray;
+  padding: 20px;
+  width: 300px;
+}
+
+.blok {
+  margin-bottom: 20px;
+}
